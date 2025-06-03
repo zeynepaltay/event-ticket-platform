@@ -1,10 +1,7 @@
-package domain;
+package com.ticket.tickets.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -13,12 +10,13 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "qr_codes")
+@Table(name = "ticket_validations")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class QrCode {
+@Builder
+public class TicketValidation {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -26,14 +24,11 @@ public class QrCode {
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private QRCodeStatusEnum status;
+    private TicketValidationStatusEnum status;
 
-    @Column(name = "value", nullable = false)
-    private String value;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticket_id")
-    private Ticket ticket;
+    @Column(name = "validation", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TicketValidationMethod validationMethod;
 
     @CreatedDate
     @Column(name ="created_at", nullable = false, updatable = false)
@@ -43,15 +38,19 @@ public class QrCode {
     @Column(name = "update_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_id")
+    private Ticket ticket;
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        QrCode qrCode = (QrCode) o;
-        return Objects.equals(id, qrCode.id) && status == qrCode.status && Objects.equals(value, qrCode.value) && Objects.equals(createdAt, qrCode.createdAt) && Objects.equals(updatedAt, qrCode.updatedAt);
+        TicketValidation that = (TicketValidation) o;
+        return id == that.id && status == that.status && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, status, value, createdAt, updatedAt);
+        return Objects.hash(id, status, createdAt, updatedAt);
     }
 }

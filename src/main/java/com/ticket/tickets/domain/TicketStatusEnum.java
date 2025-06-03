@@ -1,4 +1,4 @@
-package domain;
+package com.ticket.tickets.domain;
 
 public enum TicketStatusEnum {
     PURCHASED,
