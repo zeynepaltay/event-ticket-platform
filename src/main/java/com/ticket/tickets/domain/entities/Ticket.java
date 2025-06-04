@@ -1,4 +1,4 @@
-package com.ticket.tickets.domain;
+package com.ticket.tickets.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,30 +15,34 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "ticket_types")
+@Table(name ="tickets")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class TicketType {
+public class Ticket {
     @Id
     @Column(name ="id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name ="name", nullable = false)
-    private String name;
-
-    @Column(name="price", nullable = false)
-    private Double price;
-
-    @Column(name ="total_available")
-    private Integer totalAvailable;
+    @Column(name ="status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TicketStatusEnum status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="event_id")
-    private Event event;
+    @JoinColumn(name = "ticket_type_id")
+    private TicketType ticketType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "purchaser_id")
+    private User purchaser;
+
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
+    private List<TicketValidation> validations= new ArrayList<>();
+
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
+    private List<QrCode> qrCode = new ArrayList<>();
 
     @CreatedDate
     @Column(name ="created_at", nullable = false, updatable = false)
@@ -48,18 +52,15 @@ public class TicketType {
     @Column(name = "update_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "ticketType", cascade = CascadeType.ALL)
-    private List<Ticket> tickets= new ArrayList<>();
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        TicketType that = (TicketType) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(price, that.price) && Objects.equals(totalAvailable, that.totalAvailable) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt);
+        Ticket ticket = (Ticket) o;
+        return Objects.equals(id, ticket.id) && status == ticket.status && Objects.equals(createdAt, ticket.createdAt) && Objects.equals(updatedAt, ticket.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, price, totalAvailable, createdAt, updatedAt);
+        return Objects.hash(id, status, createdAt, updatedAt);
     }
 }
