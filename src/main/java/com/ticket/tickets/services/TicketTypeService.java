@@ -7,5 +7,5 @@ import java.util.UUID;
 
 @Service
 public interface TicketTypeService {
-    Ticket purchaseTicketType(UUID userId, UUID ticketType);
+    Ticket purchaseTicketType(UUID userId, UUID ticketTypeId);
 }
