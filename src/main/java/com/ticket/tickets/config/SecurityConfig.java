@@ -24,7 +24,9 @@ public class SecurityConfig {
 
                         authorize
                                 .requestMatchers(HttpMethod.GET, "/api/v1/published-events/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/events").hasRole("ORGANIZER")
                                 .anyRequest().authenticated())
+
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
