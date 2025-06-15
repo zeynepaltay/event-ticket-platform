@@ -3,10 +3,13 @@ package com.ticket.tickets.controllers;
 import com.ticket.tickets.domain.dtos.GetTicketResponseDto;
 import com.ticket.tickets.domain.dtos.ListTicketResponseDto;
 import com.ticket.tickets.mappers.TicketMapper;
+import com.ticket.tickets.services.QrCodeService;
 import com.ticket.tickets.services.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -25,6 +28,7 @@ import static com.ticket.tickets.util.JwtUtil.parseUserId;
 public class TicketContoller {
     private final TicketService ticketService;
     private final TicketMapper ticketMapper;
+    private final QrCodeService qrCodeService;
 
     @GetMapping
     public Page<ListTicketResponseDto> listTickets(
@@ -44,5 +48,21 @@ public class TicketContoller {
         .map(ticketMapper::toGetTicketResponseDto)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(path = "/{ticketId}/qr-codes")
+    public ResponseEntity<byte[]> getTicketQrCode (
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID ticketId
+    ){
+        byte[] qrCodeImage = qrCodeService.getQrCodeImageForUserAndTicket(
+                parseUserId(jwt), ticketId);
+
+         HttpHeaders headers = new HttpHeaders();
+         headers.setContentType(MediaType.IMAGE_PNG);
+         headers.setContentLength(qrCodeImage.length);
+         return ResponseEntity.ok()
+                 .headers(headers)
+                 .body(qrCodeImage);
     }
 }
