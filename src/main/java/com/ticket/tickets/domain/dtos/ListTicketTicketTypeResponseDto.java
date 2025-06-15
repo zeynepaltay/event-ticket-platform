@@ -9,7 +9,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListTicketTicketDtoResponse {
+public class ListTicketTicketTypeResponseDto {
     private UUID id;
     private String name;
     private Double price;

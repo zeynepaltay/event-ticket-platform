@@ -13,7 +13,7 @@ import java.util.UUID;
 public class ListTicketResponseDto {
     private UUID id;
     private TicketStatusEnum status;
-    private ListTicketTicketDtoResponse ticketType;
+    private ListTicketTicketTypeResponseDto ticketType;
     private String name;
     private String description;
 
