@@ -1,5 +1,6 @@
 package com.ticket.tickets.repositories;
 
+import com.ticket.tickets.domain.entities.QRCodeStatusEnum;
 import com.ticket.tickets.domain.entities.QrCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,4 +12,5 @@ import java.util.UUID;
 public interface QrCodeRepository extends JpaRepository<QrCode, UUID> {
 
     Optional<QrCode> findByTicketIdAndTicketPurchaserId(UUID ticketId, UUID ticketPurchaseId);
+    Optional<QrCode> findByIdAndStatus (UUID id, QRCodeStatusEnum status);
 }
