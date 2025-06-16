@@ -6,7 +6,6 @@ import com.ticket.tickets.exceptions.TicketNotFoundException;
 import com.ticket.tickets.repositories.QrCodeRepository;
 import com.ticket.tickets.repositories.TicketRepository;
 import com.ticket.tickets.repositories.TicketValidationRepository;
-import com.ticket.tickets.services.QrCodeService;
 import com.ticket.tickets.services.TicketValidationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,13 +32,13 @@ public class TicketValidationServiceImpl implements TicketValidationService {
                 ));
         Ticket ticket = qrCode.getTicket();
 
-        return validateTicket(ticket);
+        return validateTicket(ticket, TicketValidationMethod.QR_SCAN);
     }
 
-    private TicketValidation validateTicket(Ticket ticket) {
+    private TicketValidation validateTicket(Ticket ticket, TicketValidationMethod ticketValidationMethod) {
         TicketValidation ticketValidation = new TicketValidation();
         ticketValidation.setTicket(ticket);
-        ticketValidation.setValidationMethod(TicketValidationMethod.QR_SCAN);
+        ticketValidation.setValidationMethod(ticketValidationMethod);
 
         TicketValidationStatusEnum ticketValidationStatusEnum= ticket.getValidations().stream()
                 .filter(v -> TicketValidationStatusEnum.VALID.equals(v.getStatus()))
@@ -56,6 +55,6 @@ public class TicketValidationServiceImpl implements TicketValidationService {
         Ticket ticket = ticketRepository.findById(ticketId)
             .orElseThrow(TicketNotFoundException :: new);
 
-        return validateTicket(ticket);
+        return validateTicket(ticket, TicketValidationMethod.MANUAL);
     }
 }
